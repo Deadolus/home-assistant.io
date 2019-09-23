@@ -27,8 +27,12 @@ sensor:
 {% endraw %}
 
 ### Android and iOS Devices
+While running the [Owntracks](/components/device_tracker.owntracks/) device tracker you can retrieve the battery level via a new sensor. 
+How you achieve this depends on how you have configured your Owntracks app. 
 
-While running the [Owntracks](/components/device_tracker.owntracks/) device tracker you can retrieve the battery level with a MQTT sensor. Replace username with your MQTT username (for the embedded MQTT it's simply homeassistant), and deviceid with the set Device ID in Owntracks.
+#### MQTT
+If you have configured Owntracks to send reports via MQTT you can use the received data with a MQTT sensor.
+Replace username with your MQTT username (for the embedded MQTT it's simply homeassistant), and deviceid with the set Device ID in Owntracks.
 
 {% raw %}
 ```yaml
@@ -39,5 +43,21 @@ sensor:
     unit_of_measurement: "%"
     value_template: '{{ value_json.batt }}'
     device_class: battery
+```
+{% endraw %}
+
+#### HTTP
+
+If you have configured Owntracks to send reports to your Home Assistant instance via HTTP you can use a template sensor. 
+Replace deviceid with the set Device ID in Owntracks.
+
+{% raw %}
+```yaml
+sensor:
+- platform: template
+    sensors:
+      your_battery_sensor_name:
+        value_template: '{{ states.device_tracker.deviceid.attributes.battery_level }}'
+        unit_of_measurement: '%'
 ```
 {% endraw %}
